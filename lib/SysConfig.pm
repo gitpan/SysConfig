@@ -4,20 +4,20 @@ require 5.005;
 use strict;
 use warnings;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 our $AUTOLOAD;
 
 #####################################################################
-# Config.pm
-# by Patrick Devine
+# SysConfig.pm
+# by Patrick Devine (c) 2001
+# patrick@bubblehockey.org
+#
+# This software is covered under the same terms as Perl itself.
 #
 # WARNING:
 #
 # This software is no where near finished and lots of stuff will
-# probably change before it is officially released.  In particular
-# the actual Class will probably be renamed and have seperate
-# Classes which will inherit the base structures in order to do
-# new and interesting things.
+# probably change before it is officially released (as 1.0).
 #
 
 #####################################################################
@@ -78,8 +78,8 @@ sub AUTOLOAD {
 
 
 #####################################################################
-# method:	package|service
-# function:	adds or removes packages or services
+# method:	package
+# function:	adds or removes packages
 
 sub package {
   my $self	= shift;
@@ -89,13 +89,68 @@ sub package {
 
 }
 
-#sub service {
-#  my $self	= shift;
-#  my $params	= shift;
-#
-#  _set_hashofhash( $self, 'service', $params );
-#
-#}
+
+#####################################################################
+# method:	partition
+# function:	adds or removes partitions from the partition list
+
+sub part {
+  my $self	= shift;
+  my $params	= shift;
+
+  _set_listofhash( $self, 'dir', 'partition', $params );
+
+}
+
+sub partition {
+  my $self	= shift;
+  my $params	= shift;
+
+  _set_listofhash( $self, 'dir', 'partition', $params );
+
+}
+
+
+#####################################################################
+# method:	raid
+# function:	adds or removes sw raid entries from the raid list
+
+sub raid {
+  my $self	= shift;
+  my $params	= shift;
+
+  _set_listofhash( $self, 'device', 'raid', $params );
+
+}
+
+
+#####################################################################
+# method:	service
+# function:	adds or removes service entries from the service list
+#		(such as inetd and initd services)
+
+sub service {
+  my $self	= shift;
+  my $params	= shift;
+
+  _set_listofhash( $self, 'name', 'service', $params );
+
+}
+
+
+#####################################################################
+# method:	device
+# function:	add or remove an extra device for the device list
+#		(useful for including devices which are not
+#		 autodetected by the installer)
+
+sub device {
+  my $self	= shift;
+  my $params	= shift;
+
+  _set_listofhash( $self, 'module', 'device', $params );
+
+}
 
 
 #####################################################################
@@ -137,50 +192,9 @@ sub _set_hashofhash {
 
 }
 
-
 #####################################################################
-# method:	partition
-# function:	adds or removes partitions from the partition list
-
-sub part {
-  my $self	= shift;
-  my $params	= shift;
-
-  _set_listofhash( $self, 'dir', 'partition', $params );
-
-}
-
-sub partition {
-  my $self	= shift;
-  my $params	= shift;
-
-  _set_listofhash( $self, 'dir', 'partition', $params );
-
-}
-
-sub raid {
-  my $self	= shift;
-  my $params	= shift;
-
-  _set_listofhash( $self, 'device', 'raid', $params );
-
-}
-
-sub service {
-  my $self	= shift;
-  my $params	= shift;
-
-  _set_listofhash( $self, 'name', 'service', $params );
-
-}
-
-sub device {
-  my $self	= shift;
-  my $params	= shift;
-
-  _set_listofhash( $self, 'module', 'device', $params );
-
-}
+# method:	_set_listofhash
+# function:	turn settings inside of our list on or off
 
 sub _set_listofhash {
   my $self	= shift;

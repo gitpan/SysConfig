@@ -1,18 +1,18 @@
 package SysConfig::XML;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 #####################################################################
 # XML.pm
 # by Patrick Devine
+# patrick@bubblehockey.org
+#
+# This software is covered under the same terms as Perl itself.
 #
 # WARNING:
 #
 # This software is no where near finished and lots of stuff will
-# probably change before it is officially released.  In particular
-# the actual Class will probably be renamed and have seperate
-# Classes which will inherit the base structures in order to do
-# new and interesting things.
+# probably change before it is officially released (as 1.0).
 #
 
 use SysConfig;
@@ -21,7 +21,7 @@ use SysConfig;
 $TAB	= 2;
 
 #####################################################################
-# method:	kickstart
+# method:	xml
 # function:	creates a scalar containing all of the data necessary
 #		for to create a kickstart file
 
@@ -55,9 +55,9 @@ sub _hash_pair {
         $buf .= _hash_pair( $data_set->{$_}, $offset + $TAB, '' );
         $buf .= ' ' x $offset . "</$_>\n";
       } elsif( ref( $data_set->{$_} ) eq 'ARRAY' ) {
-        $buf .= ' ' x $offset . "<$_>\n";
-        $buf .= _hash_pair( $data_set->{$_}, $offset + $TAB, $_ );
-        $buf .= ' ' x $offset . "</$_>\n";
+        #$buf .= ' ' x $offset . "<$_>\n";
+        $buf .= _hash_pair( $data_set->{$_}, $offset, $_ );
+        #$buf .= ' ' x $offset . "</$_>\n";
       } else {
         $buf .= ' ' x $offset . "<$_>";
         $buf .= _hash_pair( $data_set->{$_}, 0, '' ) . "</$_>\n";
@@ -67,11 +67,16 @@ sub _hash_pair {
     for my $array ( @{ $data_set } ) {
       if( ref( $array ) eq 'ARRAY' ) {
         $buf .= ' ' x $offset . "<$node_name>";
-        $buf .= _hash_pair( $array, 0, '' ) . "</$node_name>\n";
-      } else {
+        $buf .= _hash_pair( $array, 0, '' );
+	$buf .= "</$node_name>\n";
+      } elsif( ref( $array ) eq 'HASH' ) {
         $buf .= ' ' x $offset . "<$node_name>\n";
         $buf .= _hash_pair( $array, $offset + $TAB, '' );
         $buf .= ' ' x $offset . "</$node_name>\n";
+      } else {
+        $buf .= ' ' x $offset . "<$node_name>";
+        $buf .= _hash_pair( $array, 0, '' );
+	$buf .= "</$node_name>\n";
       }
     }
 
@@ -83,6 +88,7 @@ sub _hash_pair {
 
 }
 
+
 1;
 
 __END__
@@ -93,8 +99,8 @@ Kickstart - generate RedHat Kickstart files.
 
 =head1 DESCRIPTION
 
-Kickstart uses the B<Config::System> module to allow a perl script to make
-method calls which generate a RedHat Kickstart file.
+XML.pm uses the B<SysConfig.pm> module to allow a perl script to make
+method calls which generate an XML file.
 
 =item auth { KEY => VALUE, ... }
 
@@ -350,7 +356,6 @@ Specify that the master boot record of the primary drive should be initialized.
 =head1 AUTHOR INFORMATION
 
 Written by Patrick Devine, 2001.
-for VA Linux Systems
 
 =cut
 

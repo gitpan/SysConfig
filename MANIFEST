@@ -1,6 +1,7 @@
 MANIFEST
 Makefile.PL
 README
+kickstart
 lib/SysConfig.pm
 lib/SysConfig/Kickstart.pm
 lib/SysConfig/XML.pm
